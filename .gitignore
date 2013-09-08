@@ -1,12 +1,13 @@
+# .gitignore for JADE #
+
 *.class
 
-# Package Files #
 *.jar
 *.war
 *.ear
-
 
 *.txt
 *.xml
 *.mf
 *.properties
+*.iml
