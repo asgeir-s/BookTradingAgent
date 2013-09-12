@@ -49,28 +49,31 @@ public class BookBuyerAgent extends Agent {
 		if (args != null && args.length > 0) {
 			targetBookTitle = (String) args[0];
 			System.out.println("Target book is "+targetBookTitle);
-
+			sellerAgents = new AID[1];
+			sellerAgents[0] = new AID((String) args[1], AID.ISLOCALNAME);
+			
 			// Add a TickerBehaviour that schedules a request to seller agents every minute
 			addBehaviour(new TickerBehaviour(this, 60000) {
 				protected void onTick() {
 					System.out.println("Trying to buy "+targetBookTitle);
+					
 					// Update the list of seller agents
-					DFAgentDescription template = new DFAgentDescription();
-					ServiceDescription sd = new ServiceDescription();
-					sd.setType("book-selling");
-					template.addServices(sd);
-					try {
-						DFAgentDescription[] result = DFService.search(myAgent, template); 
-						System.out.println("Found the following seller agents:");
-						sellerAgents = new AID[result.length];
-						for (int i = 0; i < result.length; ++i) {
-							sellerAgents[i] = result[i].getName();
-							System.out.println(sellerAgents[i].getName());
-						}
-					}
-					catch (FIPAException fe) {
-						fe.printStackTrace();
-					}
+//					DFAgentDescription template = new DFAgentDescription();
+//					ServiceDescription sd = new ServiceDescription();
+//					sd.setType("book-selling");
+//					template.addServices(sd);
+//					try {
+//						DFAgentDescription[] result = DFService.search(myAgent, template); 
+//						System.out.println("Found the following seller agents:");
+//						sellerAgents = new AID[result.length];
+//						for (int i = 0; i < result.length; ++i) {
+//							sellerAgents[i] = result[i].getName();
+//							System.out.println(sellerAgents[i].getName());
+//						}
+//					}
+//					catch (FIPAException fe) {
+//						fe.printStackTrace();
+//					}
 
 					// Perform the request
 					myAgent.addBehaviour(new RequestPerformer());
