@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA  02111-1307, USA.
  *****************************************************************/
 
-package examples.bookTrading;
+package src.booktradingagent;
 
 import jade.core.Agent;
 import jade.core.AID;
@@ -30,6 +30,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
+import jade.domain.FIPANames;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
@@ -49,31 +50,17 @@ public class BookBuyerAgent extends Agent {
 		if (args != null && args.length > 0) {
 			targetBookTitle = (String) args[0];
 			System.out.println("Target book is "+targetBookTitle);
-			sellerAgents = new AID[1];
-			sellerAgents[0] = new AID((String) args[1], AID.ISLOCALNAME);
-			
+			String[] args2Agents = ((String)args[1]).split(";");
+			sellerAgents = new AID[args2Agents.length];
+			int i = 0;
+			for (String string : args2Agents) {
+				sellerAgents[i] = new AID(string, AID.ISLOCALNAME);
+				i++;
+			}
 			// Add a TickerBehaviour that schedules a request to seller agents every minute
 			addBehaviour(new TickerBehaviour(this, 60000) {
 				protected void onTick() {
 					System.out.println("Trying to buy "+targetBookTitle);
-					
-					// Update the list of seller agents
-//					DFAgentDescription template = new DFAgentDescription();
-//					ServiceDescription sd = new ServiceDescription();
-//					sd.setType("book-selling");
-//					template.addServices(sd);
-//					try {
-//						DFAgentDescription[] result = DFService.search(myAgent, template); 
-//						System.out.println("Found the following seller agents:");
-//						sellerAgents = new AID[result.length];
-//						for (int i = 0; i < result.length; ++i) {
-//							sellerAgents[i] = result[i].getName();
-//							System.out.println(sellerAgents[i].getName());
-//						}
-//					}
-//					catch (FIPAException fe) {
-//						fe.printStackTrace();
-//					}
 
 					// Perform the request
 					myAgent.addBehaviour(new RequestPerformer());
@@ -113,6 +100,7 @@ public class BookBuyerAgent extends Agent {
 				for (int i = 0; i < sellerAgents.length; ++i) {
 					cfp.addReceiver(sellerAgents[i]);
 				} 
+				cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 				cfp.setContent(targetBookTitle);
 				cfp.setConversationId("book-trade");
 				cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
